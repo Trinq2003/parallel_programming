@@ -67,7 +67,6 @@ void write_vtkPointCoordinates(FILE *fp, int imax, int jmax, double dx, double d
     fprintf(fp, "LOOKUP_TABLE default\n");
     for (j = 0; j <= jmax; j++) {
         for (i = 0; i <= imax; i++) {
-            // Example calculation for v
             fprintf(fp, "%f ", j * dy);
         }
     }

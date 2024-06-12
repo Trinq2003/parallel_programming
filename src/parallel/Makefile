@@ -1,22 +1,27 @@
 CC = gcc
+NVCC = nvcc
 CFLAGS = -Wall -pedantic -Werror
+LDFLAGS = -lm
 OBJDIR = obj
 SRCDIR = .
 HEADERDIR = header
+CUDADIR = cuda
 VTKDIR = vtk
 
-# List of source files
 SRC = $(SRCDIR)/helper.c $(SRCDIR)/init.c $(SRCDIR)/boundary_val.c $(SRCDIR)/uvp.c $(SRCDIR)/sor.c $(SRCDIR)/main.c $(SRCDIR)/visual.c
+CUDA_SRC = $(CUDADIR)/cuda_kernels.cu
 
-# Generate object file names by replacing source directory with object directory and .c with .o
 OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+CUDA_OBJ = $(CUDA_SRC:$(CUDADIR)/%.cu=$(OBJDIR)/%.o)
 
-# Rule to build object files, creating the object directory first if necessary
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
-all: $(OBJ)
-	$(CC) $(CFLAGS) -o sim $(OBJ) -lm
+$(OBJDIR)/%.o: $(CUDADIR)/%.cu
+	$(NVCC) -c $< -o $@
+
+all: $(OBJDIR) $(OBJ) $(CUDA_OBJ)
+	$(CC) $(CFLAGS) -o sim $(OBJ) $(CUDA_OBJ) $(LDFLAGS) -lcudart -L/usr/local/cuda/lib64
 
 clean:
 	rm -f $(OBJDIR)/*.o sim
