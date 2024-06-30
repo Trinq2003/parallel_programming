@@ -10,8 +10,8 @@
 
 int main() {
     double xlength = 1.0, ylength = 1.0;
-    int imax = 50, jmax = 50;
-    double t = 0, tend = 50.0, dt = 0.05, tau = 0.5, dt_value = 0.5;
+    int imax = 20, jmax = 20;
+    double t = 0, tend = 5.0, dt = 0.05, tau = 0.5, dt_value = 0.5;
     double eps = 0.001, omg = 1.7, gamma = 0.5;
     double Re = 0.1, GX = 0.0, GY = 0.0;
     double UI = 0.0, VI = 0.0, PI = 0.0;
@@ -22,12 +22,12 @@ int main() {
     double res;
 
     // Memory allocation
-    U = matrix(0, imax + 1, 0, jmax + 1);
-    V = matrix(0, imax + 1, 0, jmax + 1);
-    P = matrix(0, imax + 1, 0, jmax + 1);
-    F = matrix(0, imax + 1, 0, jmax + 1);
-    G = matrix(0, imax + 1, 0, jmax + 1);
-    RS = matrix(0, imax + 1, 0, jmax + 1);
+    U = allocate_2d_array(imax + 2, jmax + 2);
+    V = allocate_2d_array(imax + 2, jmax + 2);
+    P = allocate_2d_array(imax + 2, jmax + 2);
+    F = allocate_2d_array(imax + 2, jmax + 2);
+    G = allocate_2d_array(imax + 2, jmax + 2);
+    RS = allocate_2d_array(imax + 2, jmax + 2);
 
     // Initialization
     init_uvp(UI, VI, PI, imax, jmax, U, V, P);
@@ -38,7 +38,7 @@ int main() {
     while (t < tend) {
         calculate_dt(Re, tau, &dt, dx, dy, imax, jmax, U, V);
         boundaryvalues(imax, jmax, U, V, P, F, G);
-        calculate_fg(Re, GX, GY, gamma, dt, dx, dy, imax, jmax, U, V, F, G);
+        calculate_fg(Re, GX, GY, gamma, dt, dx, dy, imax, jmax, U, V, F, G); // CUDA-accelerated function
         calculate_rs(dt, dx, dy, imax, jmax, F, G, RS);
 
         it = 0;
@@ -64,12 +64,12 @@ int main() {
     printf("Time taken to complete: %f seconds\n", time_taken);
 
     // Free memory
-    free_matrix(U, 0, imax + 1, 0, jmax + 1);
-    free_matrix(V, 0, imax + 1, 0, jmax + 1);
-    free_matrix(P, 0, imax + 1, 0, jmax + 1);
-    free_matrix(F, 0, imax + 1, 0, jmax + 1);
-    free_matrix(G, 0, imax + 1, 0, jmax + 1);
-    free_matrix(RS, 0, imax + 1, 0, jmax + 1);
+    free_2d_array(U);
+    free_2d_array(V);
+    free_2d_array(P);
+    free_2d_array(F);
+    free_2d_array(G);
+    free_2d_array(RS);
 
     return 0;
 }

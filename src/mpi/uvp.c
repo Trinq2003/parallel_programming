@@ -7,7 +7,6 @@ void calculate_fg(double Re, double GX, double GY, double gamma, double dt, doub
     double dx2 = dx * dx;
     double dy2 = dy * dy;
 
-    // Calculate F
     for (i = 1; i <= imax - 1; i++)
     {
         for (j = 1; j <= jmax; j++)
@@ -19,7 +18,6 @@ void calculate_fg(double Re, double GX, double GY, double gamma, double dt, doub
         }
     }
 
-    // Calculate G
     for (i = 1; i <= imax; i++)
     {
         for (j = 1; j <= jmax - 1; j++)
